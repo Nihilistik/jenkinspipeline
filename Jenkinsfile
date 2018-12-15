@@ -25,12 +25,12 @@ pipeline {
             parallel {
                 stage ('Deploy to QA'){
                     steps{
-                        sh "docker cp **/target/*.war ${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                        sh "docker cp **/target/*.war ${params.tomcat_dev}:/usr/local/tomcat/webapps"
                     }
                 }
                 stage ('Deploy to PRO'){
                     steps{
-                        sh "docker cp **/target/*.war ${params.tomcat_pro}:/var/lib/tomcat7/webapps"
+                        sh "docker cp **/target/*.war ${params.tomcat_pro}:/usr/local/tomcat/webapps"
                     }
                 }
             }
