@@ -27,7 +27,7 @@ pipeline {
                     steps{
                         sh '''
                         #!/bin/bash
-                        docker cp **/target/*.war ${params.tomcat_dev}:/var/lib/tomcat7/webapps
+                        docker cp webapp/target/*.war ${params.tomcat_dev}:/var/lib/tomcat7/webapps
                         '''
                     }
                 }
@@ -35,7 +35,7 @@ pipeline {
                     steps{
                         sh '''
                         #!/bin/bash
-                        docker cp **/target/*.war ${params.tomcat_pro}:/var/lib/tomcat7/webapps
+                        docker cp webapp/target/*.war ${params.tomcat_pro}:/var/lib/tomcat7/webapps
                         '''
                     }
                 }
