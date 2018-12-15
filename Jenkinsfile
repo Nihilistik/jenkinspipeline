@@ -1,6 +1,15 @@
 pipeline {
     agent any
-    stages{
+
+    parameters {
+        string(name:'tomcat_dev', defaultValue: 'relaxed_pike', description:'QA Server')
+        string(name:'tomcat_pro', defaultValue: 'tomcatPRO', description:'PRO Server')
+    }
+    
+    triggers {
+        pollSCM('* * * * *')
+    }
+    stages {
         stage('Build'){
             steps {
                 sh 'mvn clean package'
@@ -12,26 +21,17 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Staging'){
-            steps{
-                build job: 'deploy-to-staging'
-            }
-        }
-
-        stage('Deploy to Production'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message: 'Aprove PRODUCTION Deployment?'
+        stage ('Deployments'){
+            parallel {
+                stage ('Deploy to QA'){
+                    steps{
+                        sh 'docker cp **/target/*.war ${params.tomcat_dev}:/var/lib/tomcat7/webapps'
+                    }
                 }
-
-                build job: 'deploy-to-pro'
-            }
-            post{
-                success{
-                    echo 'Code deployed to Production.'
-                }
-                failure {
-                    echo 'Deployment failed.'
+                stage ('Deploy to PRO'){
+                    steps{
+                        sh 'docker cp **/target/*.war ${params.tomcat_pro}:/var/lib/tomcat7/webapps'
+                    }
                 }
             }
         }
